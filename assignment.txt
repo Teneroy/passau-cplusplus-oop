@@ -1,16 +1,19 @@
 Task 1:
-    1. For "a" does not matter. For "b" any number that is not zero.
-    2. The program is incorrect. There should be an == sign instead of = sign in if statement.
+     1. Call-by-value method copies the value, so the copy of the variable is being passed to the method.
+     So change in the variable changes the copy of it, but not the original data and the original variable.
+     Meanwhile, call-by-reference passes the so-called "variable itself" by passing an address of an object.
+     Change in the variable affects the value of variable outside the function also.
+     Call-by-value is related to the primitive types, values of those are being stored in stack. Call-by-reference
+     relates to objects, those are being stored in heap.
+     2. The heap is the portion of memory where dynamically allocated memory resides.
+     Memory allocated from the heap will remain allocated until the memory is freed or the program terminates.
+     3. Undefined behavior (UB) is the result of executing a program whose behavior is prescribed to be unpredictable,
+     in the language specification to which the computer code adheres.
+     In the following program it is a cast of an int pointer to char ponter. The results are not portable due to endianness issues.
+     4. Because we want to preserve incapsulation in our class, so user cannot affect the class data and behaviour in a wrong way.
+     5. If this object was not allocated via new. The rest of the code after "delete this" touches any piece of this object.
 
 Task 2:
-    1. While pointer holds memory address of another variable, a reference is an alias for an existing variable.
-    So pointers can be reassigned, we can have nested pointers to the pointers, pointers can be assigned to nullprt(safely), pointers can be put into an array. All of that is not the case for references.
-    Also, in order to access members of the class or structure pointer points to, we should use arrow, while with references we should use a dot.
-    Pointer has its own memory address and space, while reference has not.
-    Reference must be initialized while pointer not.
-    2. Reference variable cannot take a null value. Practically, we can force it to take null by casting. However, it would lead to undefined behaviour, since different compilers can optimise code differently.
-    3. С-strings implemented as char array with a null character as the last element. Meanwhile, C++ style-strings implemented as a container for handling char arrays, similar to vector of chars.
-    While operations on C-strings are represented by functions in "string.h" or <cstring> libraries, operations on C++ style-strings are implemented either by overloaded operators or class methods. Generally, C++ style-strings have more in-build methods than C-strings.
-    C-strings do not contain information about their size, so retrieving of this information happens in linear time, while C++ style-strings do, so we can get the size in constant time. For dynamically-sized C-strings programmer should manually allocate, resize, and copy string, while with C++ style-string they should not be worried about it. So generally, we can claim that C++ style-strings are more convenient in use and safer in terms of boundary protection than C-strings.
-    4. Namespaces are being used to prevent the name conflict in a project. You can call a class, function, etc. the same in your library as in other library for instance, and there would be no conflict thanks to namespaces.
-    5. Auto type requires initialization. So I would either initialize it or pick a particular type.
+    1. We return a reference on a newly created object. But, this object was created in stack but not in heap, because
+     we never used new or allocated memory for it in any other mean. So this object would be deleted after the function call would be finished.
+    2. In order to fix it we can return the copy of the vector.

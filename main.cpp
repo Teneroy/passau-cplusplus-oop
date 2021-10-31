@@ -1,21 +1,14 @@
 #include <iostream>
-
+#include <vector>
 using namespace std;
 
+vector<int> a() {
+    vector<int> t {1, 2, 3};
+    return t;
+}
+
 int main() {
-    /*int a,b;
-    cin >> a >> b;
-    if(a == b) {
-        cout << "Yes" << endl;
-    } else {
-        cout << "No" << endl;
-    }*/
-
-//    auto a = 0;
-//    cin >> a;
-
-    int a = 12;
-    int &b = a;
-
+    vector<int> x = a();
+    cout << x.at(1) << endl;
     return 0;
 }
