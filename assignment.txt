@@ -1,19 +1,27 @@
 Task 1:
-     1. Call-by-value method copies the value, so the copy of the variable is being passed to the method.
-     So change in the variable changes the copy of it, but not the original data and the original variable.
-     Meanwhile, call-by-reference passes the so-called "variable itself" by passing an address of an object.
-     Change in the variable affects the value of variable outside the function also.
-     Call-by-value is related to the primitive types, values of those are being stored in stack. Call-by-reference
-     relates to objects, those are being stored in heap.
-     2. The heap is the portion of memory where dynamically allocated memory resides.
-     Memory allocated from the heap will remain allocated until the memory is freed or the program terminates.
-     3. Undefined behavior (UB) is the result of executing a program whose behavior is prescribed to be unpredictable,
-     in the language specification to which the computer code adheres.
-     In the following program it is a cast of an int pointer to char ponter. The results are not portable due to endianness issues.
-     4. Because we want to preserve incapsulation in our class, so user cannot affect the class data and behaviour in a wrong way.
-     5. If this object was not allocated via new. The rest of the code after "delete this" touches any piece of this object.
+    1. Static binding happens at compile-time while dynamic binding happens at runtime.
+    In static binding the function definition and function call are linked during the compile-time,
+    while in dynamic binding the function calls are not resolved until runtime, because
+    in contrast to static binding compiler does not have enough information for a function call.
+    General example of static binding is when we have a function defined in a class, an object
+    of this class created and function being called. While a typical example of dynamic binding
+    is an overrided virtual function by class B that inherits class A.
+    2. -
+    3. It would, because circle is a subclass of an ellipse.
+    4. Abstract class is a class that has at least one abstract(e.g. virtual) member function.
+    5.Whenever a class defines a virtual function (or method), most compilers add a hidden member
+    variable to the class that points to an array of pointers to (virtual) functions called the virtual method table.
+    These pointers are used at runtime to invoke the appropriate function implementations, because at compile time
+    it may not yet be known if the base function is to be called or a derived one implemented by a class that inherits
+    from the base class.
+    6. As opposed to referencing a data value, a function pointer points to executable code within memory.
+    Invocation of it is also known as an "indirect" call, because the function is being invoked indirectly
+    through a variable instead of directly through a fixed identifier or address.
+    7. Virtual destructor is useful when you are trying to delete the derrived class, since
+    In most implementations, the call to the destructor will be resolved like any non-virtual code,
+    meaning that the destructor of the base class will be called but not the one of the derived class,
+    resulting in a resources leak.
 
 Task 2:
-    1. We return a reference on a newly created object. But, this object was created in stack but not in heap, because
-     we never used new or allocated memory for it in any other mean. So this object would be deleted after the function call would be finished.
-    2. In order to fix it we can return the copy of the vector.
+    1. Since "value" method is not virtual, it cannot be overrided, so the "value" from the Base class is being called.
+    2. ???? No virtual methods has been found
