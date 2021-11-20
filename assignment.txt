@@ -6,7 +6,7 @@ Task 1:
     General example of static binding is when we have a function defined in a class, an object
     of this class created and function being called. While a typical example of dynamic binding
     is an overrided virtual function by class B that inherits class A.
-    2. -
+    2. Abstraction, Hierarchy
     3. It would, because circle is a subclass of an ellipse.
     4. Abstract class is a class that has at least one abstract(e.g. virtual) member function.
     5.Whenever a class defines a virtual function (or method), most compilers add a hidden member
