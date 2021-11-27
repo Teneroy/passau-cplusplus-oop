@@ -3,27 +3,14 @@
 //
 
 #include <iostream>
-#include "./question3/circle.h"
-#include "./question3/ellipse.h"
-#include "./question3/square.h"
-#include "./question3/triangle.h"
+#include "circle.h"
+#include "ellipse.h"
+#include "square.h"
+#include "triangle.h"
 
 using namespace std;
 
-//void rotate(int &a, int &b, int &c) {
-//    int temp = a;
-//    a = b;
-//    b = c;
-//    c = temp;
-//}
-
 int main() {
-//    int a = 5, b = 7, c = 9;
-//
-//    cout << "Before rotation: a=" << a << ", b=" << b << ", c=" << c << endl;
-//    rotate(a, b, c);
-//    cout << "After rotation: a=" << a << ", b=" << b << ", c=" << c << endl;
-
     Circle circle(5);
     cout << "The area of a circle with the radius of " << circle.getRadius() << " is " << circle.area() << endl;
     cout << "The circumference of a circle with radius of " << circle.getRadius() << " is " << circle.circumference() << endl;
