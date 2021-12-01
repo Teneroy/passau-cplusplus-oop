@@ -3,141 +3,71 @@
 //
 
 #include "expr.h"
+#include <cctype>
+#include <algorithm>
 
-Calculator::Calculator(const std::string& expression)
-{
-    std::string s = removeSpaces(expression);
-    // std::cout << s << std::endl;
-
+ASTNode * BuildAST::build(const std::string& expr) {
+    std::string s = expr;
+    s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
+    std::list<std::string> mTokens;
     tokenize(s, mTokens);
-
-    // std::list<std::string>::iterator it, itEnd;
-    // for (it = mTokens.begin(); it != mTokens.end(); ++it) {
-    //     std::cout << *it << " ";
-    // }
-    // std::cout << std::endl;
-
-    mCurrent = mTokens.front();
+    return _exp(mTokens.front(), mTokens);
 }
 
-void
-Calculator::next()
+void BuildAST::tokenize(const std::string& str, std::list<std::string>& tokens)
 {
-    mTokens.pop_front();
+    std::string num;
+    int N = str.size();
 
-    if (!mTokens.empty()) {
-        mCurrent = mTokens.front();
-    } else {
-        mCurrent = std::string();
-    }
-}
-
-int
-Calculator::exp()
-{
-    int result = term();
-    while (mCurrent == "+" || mCurrent == "-") {
-        if (mCurrent == "+") {
-            next();
-            result += term();
-        }
-        if (mCurrent == "-") {
-            next();
-            result -= term();
-        }
-    }
-    return result;
-}
-
-int
-Calculator::term()
-{
-    int result = factor();
-    while (mCurrent == "*" || mCurrent == "/") {
-        if (mCurrent == "*") {
-            next();
-            result *= factor();
-//            ASTNode * node = rootNode;
-//            ASTNode * mult = new Operator('*');
-//            rootNode = new BlankNode(mult, node);
-        }
-        if (mCurrent == "/") {
-            next();
-            //
-            // Could simply be:
-            // result /= term();
-            //
-            // But we need to deal with divide by 0
-            //
-            int denominator = factor();
-            if (denominator != 0) {
-                result /= denominator;
-            } else {
-                result = 0;
+    for (int i = 0; i < N; ++i) {
+        char c = str[i];
+        if (isdigit(c)) {
+            num += c;
+        } else {
+            if (!num.empty()) {
+                tokens.push_back(num);
+                num.clear();
             }
+            std::string token;
+            token += c;
+            tokens.push_back(token);
         }
     }
-    return result;
-}
 
-int
-Calculator::factor()
-{
-    int result;
-
-    if (mCurrent == "(") {
-        next();
-        result = exp();
-        next();
-    } else {
-        result = toInt(mCurrent);
-        next();
-    }
-
-    return result;
-}
-
-int
-Calculator::toInt(const std::string& s)
-{
-    std::stringstream ss;
-    ss << s;
-    int x;
-    ss >> x;
-    return x;
-}
-
-
-//__________________________
-
-
-void
-Calculator::_next()
-{
-    mTokens.pop_front();
-
-    if (!mTokens.empty()) {
-        mCurrent = mTokens.front();
-    } else {
-        mCurrent = std::string();
+    if (!num.empty()) {
+        tokens.push_back(num);
+        num.clear();
     }
 }
 
-ASTNode *
-Calculator::_exp()
+string BuildAST::_next(list<string> &_mTokens)
 {
-    ASTNode * result = _term();
-    while (mCurrent == "+" || mCurrent == "-") {
-        if (mCurrent == "+") {
-            _next();
-            ASTNode * summator = _term();
+    string _mCurrent;
+    _mTokens.pop_front();
+
+    if (!_mTokens.empty()) {
+        _mCurrent = _mTokens.front();
+    } else {
+        _mCurrent = std::string();
+    }
+
+    return _mCurrent;
+}
+
+ASTNode * BuildAST::_exp(string &_mCurrent, list<string> &_mTokens)
+{
+    ASTNode * result = _term(_mCurrent, _mTokens);
+    while (_mCurrent == "+" || _mCurrent == "-") {
+        if (_mCurrent == "+") {
+            _mCurrent = _next(_mTokens);
+            ASTNode * summator = _term(_mCurrent, _mTokens);
             summator = new BlankNode(summator, new Nil);
             result = new BlankNode(result, summator);
             result = new BlankNode(new Operator('+'), result);
         }
-        if (mCurrent == "-") {
-            _next();
-            ASTNode * substractor = _term();
+        if (_mCurrent == "-") {
+            _mCurrent = _next(_mTokens);
+            ASTNode * substractor = _term(_mCurrent, _mTokens);
             substractor = new BlankNode(substractor, new Nil);
             result = new BlankNode(result, substractor);
             result = new BlankNode(new Operator('-'), result);
@@ -146,21 +76,20 @@ Calculator::_exp()
     return result;
 }
 
-ASTNode *
-Calculator::_term()
+ASTNode * BuildAST::_term(string &_mCurrent, list<string> &_mTokens)
 {
-    ASTNode * result = _factor();
-    while (mCurrent == "*" || mCurrent == "/") {
-        if (mCurrent == "*") {
-            _next();
-            ASTNode * multiplier = _factor();
+    ASTNode * result = _factor(_mCurrent, _mTokens);
+    while (_mCurrent == "*" || _mCurrent == "/") {
+        if (_mCurrent == "*") {
+            _mCurrent = _next(_mTokens);
+            ASTNode * multiplier = _factor(_mCurrent, _mTokens);
             multiplier = new BlankNode(multiplier, new Nil);
             result = new BlankNode(result, multiplier);
             result = new BlankNode(new Operator('*'), result);
         }
-        if (mCurrent == "/") {
-            _next();
-            ASTNode * denominator = _factor();
+        if (_mCurrent == "/") {
+            _mCurrent = _next(_mTokens);
+            ASTNode * denominator = _factor(_mCurrent, _mTokens);
             denominator = new BlankNode(denominator, new Nil);
             result = new BlankNode(result, denominator);
             result = new BlankNode(new Operator('/'), result);
@@ -169,29 +98,18 @@ Calculator::_term()
     return result;
 }
 
-ASTNode *
-Calculator::_factor()
+ASTNode * BuildAST::_factor(string &_mCurrent, list<string> &_mTokens)
 {
     ASTNode * result;
 
-    if (mCurrent == "(") {
-        _next();
-        result = _exp();
-        _next();
+    if (_mCurrent == "(") {
+        _mCurrent = _next(_mTokens);
+        result = _exp(_mCurrent, _mTokens);
+        _mCurrent = _next(_mTokens);
     } else {
-        result = new Data(_toInt(mCurrent));
-        _next();
+        result = new Data(stoi(_mCurrent));
+        _mCurrent = _next(_mTokens);
     }
 
     return result;
-}
-
-int
-Calculator::_toInt(const std::string& s)
-{
-    std::stringstream ss;
-    ss << s;
-    int x;
-    ss >> x;
-    return x;
 }
