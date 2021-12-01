@@ -130,28 +130,15 @@ Calculator::_exp()
     while (mCurrent == "+" || mCurrent == "-") {
         if (mCurrent == "+") {
             _next();
-            //result += _term();
-            //... if (d_cast<summ>) { new BN }
             ASTNode * summator = _term();
-            //if(dynamic_cast<Data*>(summator) != nullptr) { <--------------------
-                summator = new BlankNode(summator, new Nil);
-            //}                                              <--------------------
-//            if(dynamic_cast<Data*>(result) != nullptr) {
-//                result = new BlankNode(result, result);
-//            }
+            summator = new BlankNode(summator, new Nil);
             result = new BlankNode(result, summator);
             result = new BlankNode(new Operator('+'), result);
         }
         if (mCurrent == "-") {
             _next();
-            //result -= _term();
             ASTNode * substractor = _term();
-            //if(dynamic_cast<Data*>(substractor) != nullptr) { <--------------------
-                substractor = new BlankNode(substractor, new Nil);
-            //}                                                 <--------------------
-//            if(dynamic_cast<Data*>(result) != nullptr) {
-//                result = new BlankNode(result, result);
-//            }
+            substractor = new BlankNode(substractor, new Nil);
             result = new BlankNode(result, substractor);
             result = new BlankNode(new Operator('-'), result);
         }
@@ -166,40 +153,15 @@ Calculator::_term()
     while (mCurrent == "*" || mCurrent == "/") {
         if (mCurrent == "*") {
             _next();
-            //result *= _factor();
             ASTNode * multiplier = _factor();
-   //         if(dynamic_cast<Data*>(multiplier) != nullptr) { <--------------------
-                multiplier = new BlankNode(multiplier, new Nil);
-     //       }                                                 <--------------------
-//            if(dynamic_cast<Data*>(result) != nullptr) {
-//                result = new BlankNode(result, multiplier);
-//            }
+            multiplier = new BlankNode(multiplier, new Nil);
             result = new BlankNode(result, multiplier);
             result = new BlankNode(new Operator('*'), result);
-//            ASTNode * node = rootNode;
-//            ASTNode * mult = new Operator('*');
-//            rootNode = new BlankNode(mult, node);
         }
         if (mCurrent == "/") {
             _next();
-            //
-            // Could simply be:
-            // result /= term();
-            //
-            // But we need to deal with divide by 0
-            //
             ASTNode * denominator = _factor();
-//            if (denominator != 0) {
-//                result /= denominator;
-//            } else {
-//                result = 0;
-//            }
-            //if(dynamic_cast<Data*>(denominator) != nullptr) {     <--------------------
-                denominator = new BlankNode(denominator, new Nil);
-            //}                                                     <--------------------
-//            if(dynamic_cast<Data*>(result) != nullptr) {
-//                result = new BlankNode(result, denominator);
-//            }
+            denominator = new BlankNode(denominator, new Nil);
             result = new BlankNode(result, denominator);
             result = new BlankNode(new Operator('/'), result);
         }
@@ -210,12 +172,11 @@ Calculator::_term()
 ASTNode *
 Calculator::_factor()
 {
-    ASTNode * result = nullptr;
+    ASTNode * result;
 
     if (mCurrent == "(") {
         _next();
         result = _exp();
-        //result = new BlankNode(result, new Nil);
         _next();
     } else {
         result = new Data(_toInt(mCurrent));
