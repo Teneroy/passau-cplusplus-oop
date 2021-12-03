@@ -87,9 +87,9 @@ public:
 private:
     static void tokenize(const std::string& str, std::list<std::string>& tokens);
     static string nextStep(std::list<std::string>& tokens);
-    static ASTNode * expression(string &currentChar, list<string> &tokens);
-    static ASTNode * term(string &currentChar, list<string> &tokens);
-    static ASTNode * factor(string &currentChar, list<string> &tokens);
+    static ASTNode * expression(string &currentToken, list<string> &tokens);
+    static ASTNode * term(string &currentToken, list<string> &tokens);
+    static ASTNode * factor(string &currentToken, list<string> &tokens);
     static ASTNode * linkNodes(ASTNode * factor, ASTNode * node, ASTNode * action);
 };
 
