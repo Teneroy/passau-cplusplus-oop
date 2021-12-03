@@ -6,15 +6,54 @@
 #include <cctype>
 #include <algorithm>
 
-ASTNode * BuildAST::build(const std::string& expr) {
-    std::string s = expr;
-    s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
-    std::list<std::string> mTokens;
-    tokenize(s, mTokens);
-    return expression(mTokens.front(), mTokens);
+BlankNode::BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight) {
+    left = nodeLeft;
+    right = nodeRight;
 }
 
-void BuildAST::tokenize(const std::string& str, std::list<std::string>& tokens)
+string BlankNode::str() {
+    std::string result;
+    result.append(left -> str());
+    result.append(right -> str());
+    return result;
+}
+
+int BlankNode::evaluate() {
+    return 0;
+}
+
+Data::Data(int num) {
+    number = num;
+}
+
+string Data::str() {
+    std::string result;
+    result.append(" ");
+    result.append(std::to_string(number));
+    return result;
+}
+
+int Data::evaluate() {
+    return 0;
+}
+
+std::string Nil::str() {
+    return ")";
+}
+
+int Nil::evaluate() {
+    return 0;
+}
+
+ASTNode * BuildAST::build(const string& expr) {
+    std::string s = expr;
+    s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
+    std::list<std::string> tokens;
+    tokenize(s, tokens);
+    return expression(tokens.front(), tokens);
+}
+
+void BuildAST::tokenize(const string& str, list<string>& tokens)
 {
     std::string num;
     for (char c : str) {

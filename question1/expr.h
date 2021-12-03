@@ -19,17 +19,9 @@ public:
 
 class BlankNode : public ASTNode {
 public:
-    BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight){
-        left = nodeLeft;
-        right = nodeRight;
-    };
-    std::string str() override {
-        std::string result;
-        result.append(left -> str());
-        result.append(right -> str());
-        return result;
-    }
-    int evaluate() override { return 0; }
+    BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight);
+    std::string str() override;
+    int evaluate() override;
 
 protected:
     ASTNode *left;
@@ -54,16 +46,9 @@ private:
 
 class Data : public ASTNode {
 public:
-    explicit Data(int num) {
-        number = num;
-    };
-    std::string str() override {
-        std::string result;
-        result.append(" ");
-        result.append(std::to_string(number));
-        return result;
-    };
-    int evaluate() override { return 0; }
+    explicit Data(int num);
+    std::string str() override;
+    int evaluate() override;
 
 private:
     int number;
@@ -71,12 +56,8 @@ private:
 
 class Nil : public ASTNode {
 public:
-    std::string str() override {
-        return ")";
-    };
-    int evaluate() override {
-        return 0.0;
-    };
+    std::string str() override;
+    int evaluate() override;
 };
 
 
