@@ -11,7 +11,7 @@ ASTNode * BuildAST::build(const std::string& expr) {
     s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
     std::list<std::string> mTokens;
     tokenize(s, mTokens);
-    return _exp(mTokens.front(), mTokens);
+    return expression(mTokens.front(), mTokens);
 }
 
 void BuildAST::tokenize(const std::string& str, std::list<std::string>& tokens)
@@ -40,76 +40,73 @@ void BuildAST::tokenize(const std::string& str, std::list<std::string>& tokens)
     }
 }
 
-string BuildAST::_next(list<string> &_mTokens)
+string BuildAST::nextStep(list<string> &tokens)
 {
-    string _mCurrent;
-    _mTokens.pop_front();
+    string currentChar;
+    tokens.pop_front();
 
-    if (!_mTokens.empty()) {
-        _mCurrent = _mTokens.front();
+    if (!tokens.empty()) {
+        currentChar = tokens.front();
     } else {
-        _mCurrent = std::string();
+        currentChar = std::string();
     }
 
-    return _mCurrent;
+    return currentChar;
 }
 
-ASTNode * BuildAST::_exp(string &_mCurrent, list<string> &_mTokens)
+ASTNode * BuildAST::expression(string &currentChar, list<string> &tokens)
 {
-    ASTNode * result = _term(_mCurrent, _mTokens);
-    while (_mCurrent == "+" || _mCurrent == "-") {
-        if (_mCurrent == "+") {
-            _mCurrent = _next(_mTokens);
-            ASTNode * summator = _term(_mCurrent, _mTokens);
-            summator = new BlankNode(summator, new Nil);
-            result = new BlankNode(result, summator);
-            result = new BlankNode(new Operator('+'), result);
+    ASTNode * result = term(currentChar, tokens);
+    while (currentChar == "+" || currentChar == "-") {
+        if (currentChar == "+") {
+            currentChar = nextStep(tokens);
+            result = linkNodes(term(currentChar, tokens), result, new Operator('+'));
         }
-        if (_mCurrent == "-") {
-            _mCurrent = _next(_mTokens);
-            ASTNode * substractor = _term(_mCurrent, _mTokens);
-            substractor = new BlankNode(substractor, new Nil);
-            result = new BlankNode(result, substractor);
-            result = new BlankNode(new Operator('-'), result);
+        if (currentChar == "-") {
+            currentChar = nextStep(tokens);
+            result = linkNodes(term(currentChar, tokens), result, new Operator('-'));
         }
     }
     return result;
 }
 
-ASTNode * BuildAST::_term(string &_mCurrent, list<string> &_mTokens)
+ASTNode * BuildAST::term(string &currentChar, list<string> &tokens)
 {
-    ASTNode * result = _factor(_mCurrent, _mTokens);
-    while (_mCurrent == "*" || _mCurrent == "/") {
-        if (_mCurrent == "*") {
-            _mCurrent = _next(_mTokens);
-            ASTNode * multiplier = _factor(_mCurrent, _mTokens);
-            multiplier = new BlankNode(multiplier, new Nil);
-            result = new BlankNode(result, multiplier);
-            result = new BlankNode(new Operator('*'), result);
+    ASTNode * result = factor(currentChar, tokens);
+    while (currentChar == "*" || currentChar == "/") {
+        if (currentChar == "*") {
+            currentChar = nextStep(tokens);
+            result = linkNodes(factor(currentChar, tokens), result, new Operator('*'));
         }
-        if (_mCurrent == "/") {
-            _mCurrent = _next(_mTokens);
-            ASTNode * denominator = _factor(_mCurrent, _mTokens);
-            denominator = new BlankNode(denominator, new Nil);
-            result = new BlankNode(result, denominator);
-            result = new BlankNode(new Operator('/'), result);
+        if (currentChar == "/") {
+            currentChar = nextStep(tokens);
+            result = linkNodes(factor(currentChar, tokens), result, new Operator('/'));
         }
     }
     return result;
 }
 
-ASTNode * BuildAST::_factor(string &_mCurrent, list<string> &_mTokens)
+ASTNode * BuildAST::factor(string &currentChar, list<string> &tokens)
 {
     ASTNode * result;
 
-    if (_mCurrent == "(") {
-        _mCurrent = _next(_mTokens);
-        result = _exp(_mCurrent, _mTokens);
-        _mCurrent = _next(_mTokens);
+    if (currentChar == "(") {
+        currentChar = nextStep(tokens);
+        result = expression(currentChar, tokens);
+        currentChar = nextStep(tokens);
     } else {
-        result = new Data(stoi(_mCurrent));
-        _mCurrent = _next(_mTokens);
+        result = new Data(stoi(currentChar));
+        currentChar = nextStep(tokens);
     }
 
     return result;
+}
+
+ASTNode *BuildAST::linkNodes(ASTNode * factor, ASTNode * node, ASTNode * action) {
+    ASTNode * rightNode = new BlankNode(
+            node,
+            new BlankNode(factor, new Nil)
+            );
+
+    return new BlankNode(action, rightNode);
 }

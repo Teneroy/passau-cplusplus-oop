@@ -86,10 +86,11 @@ public:
 
 private:
     static void tokenize(const std::string& str, std::list<std::string>& tokens);
-    static string _next(std::list<std::string>& _mTokens);
-    static ASTNode * _exp(string &_mCurrent, list<string> &_mTokens);
-    static ASTNode * _term(string &_mCurrent, list<string> &_mTokens);
-    static ASTNode * _factor(string &_mCurrent, list<string> &_mTokens);
+    static string nextStep(std::list<std::string>& tokens);
+    static ASTNode * expression(string &currentChar, list<string> &tokens);
+    static ASTNode * term(string &currentChar, list<string> &tokens);
+    static ASTNode * factor(string &currentChar, list<string> &tokens);
+    static ASTNode * linkNodes(ASTNode * factor, ASTNode * node, ASTNode * action);
 };
 
 #endif //PASSAU_CPLUSPLUS_OOP_EXPR_H
