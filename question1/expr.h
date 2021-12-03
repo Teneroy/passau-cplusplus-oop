@@ -28,20 +28,24 @@ protected:
     ASTNode *right;
 };
 
-class Operator : public ASTNode {
-public:
-    explicit Operator(char t) {
-        type = t;
-    };
-    std::string str() override {
-        std::string result = " (";
-        result.append(type);
-        return result;
-    };
+class Multiply : public ASTNode {
+    std::string str() override { return " (*"; };
     int evaluate() override { return 0; }
+};
 
-private:
-    std::basic_string<char> type;
+class Plus : public ASTNode {
+    std::string str() override { return " (+"; };
+    int evaluate() override { return 0; }
+};
+
+class Divide : public ASTNode {
+    std::string str() override { return " (/"; };
+    int evaluate() override { return 0; }
+};
+
+class Minus : public ASTNode {
+    std::string str() override { return " (-"; };
+    int evaluate() override { return 0; }
 };
 
 class Data : public ASTNode {

@@ -92,11 +92,11 @@ ASTNode * BuildAST::expression(string &currentToken, list<string> &tokens)
     while (currentToken == "+" || currentToken == "-") {
         if (currentToken == "+") {
             currentToken = nextStep(tokens);
-            result = linkNodes(term(currentToken, tokens), result, new Operator('+'));
+            result = linkNodes(term(currentToken, tokens), result, new Plus);
         }
         if (currentToken == "-") {
             currentToken = nextStep(tokens);
-            result = linkNodes(term(currentToken, tokens), result, new Operator('-'));
+            result = linkNodes(term(currentToken, tokens), result, new Minus);
         }
     }
     return result;
@@ -108,11 +108,11 @@ ASTNode * BuildAST::term(string &currentToken, list<string> &tokens)
     while (currentToken == "*" || currentToken == "/") {
         if (currentToken == "*") {
             currentToken = nextStep(tokens);
-            result = linkNodes(factor(currentToken, tokens), result, new Operator('*'));
+            result = linkNodes(factor(currentToken, tokens), result, new Multiply);
         }
         if (currentToken == "/") {
             currentToken = nextStep(tokens);
-            result = linkNodes(factor(currentToken, tokens), result, new Operator('/'));
+            result = linkNodes(factor(currentToken, tokens), result, new Divide);
         }
     }
     return result;
