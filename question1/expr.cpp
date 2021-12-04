@@ -3,8 +3,6 @@
 //
 
 #include "expr.h"
-#include <cctype>
-#include <algorithm>
 
 BlankNode::BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight) {
     left = nodeLeft;
@@ -41,6 +39,11 @@ int BlankNode::evaluate() {
 
 NodeType BlankNode::getNodeType() {
     return EMPTY;
+}
+
+BlankNode::~BlankNode() {
+    delete left;
+    delete right;
 }
 
 Data::Data(int num) {
@@ -130,8 +133,7 @@ ASTNode * BuildAST::build(const string& expr) {
     return expression(tokens.front(), tokens);
 }
 
-void BuildAST::tokenize(const string& str, list<string>& tokens)
-{
+void BuildAST::tokenize(const string& str, list<string>& tokens) {
     std::string num;
     for (char c : str) {
         if (isdigit(c)) {
@@ -153,8 +155,7 @@ void BuildAST::tokenize(const string& str, list<string>& tokens)
     }
 }
 
-string BuildAST::nextStep(list<string> &tokens)
-{
+string BuildAST::nextStep(list<string> &tokens) {
     string currentToken;
     tokens.pop_front();
     if (!tokens.empty()) {
@@ -163,8 +164,7 @@ string BuildAST::nextStep(list<string> &tokens)
     return currentToken;
 }
 
-ASTNode * BuildAST::expression(string &currentToken, list<string> &tokens)
-{
+ASTNode * BuildAST::expression(string &currentToken, list<string> &tokens) {
     ASTNode * result = term(currentToken, tokens);
     while (currentToken == "+" || currentToken == "-") {
         if (currentToken == "+") {
@@ -179,8 +179,7 @@ ASTNode * BuildAST::expression(string &currentToken, list<string> &tokens)
     return result;
 }
 
-ASTNode * BuildAST::term(string &currentToken, list<string> &tokens)
-{
+ASTNode * BuildAST::term(string &currentToken, list<string> &tokens) {
     ASTNode * result = factor(currentToken, tokens);
     while (currentToken == "*" || currentToken == "/") {
         if (currentToken == "*") {
@@ -195,8 +194,7 @@ ASTNode * BuildAST::term(string &currentToken, list<string> &tokens)
     return result;
 }
 
-ASTNode * BuildAST::factor(string &currentToken, list<string> &tokens)
-{
+ASTNode * BuildAST::factor(string &currentToken, list<string> &tokens) {
     ASTNode * result;
 
     if (currentToken == "(") {

@@ -8,6 +8,8 @@
 #include <iostream>
 #include <list>
 #include <sstream>
+#include <cctype>
+#include <algorithm>
 
 using namespace std;
 
@@ -15,6 +17,7 @@ enum NodeType {PLUS, MINUS, MULTIPLY, DIVIDE, DATA, NIL, EMPTY};
 
 class ASTNode {
 public:
+    virtual ~ASTNode() = default;
     virtual std::string str() = 0;
     virtual int evaluate() = 0;
     virtual NodeType getNodeType() = 0;
@@ -72,6 +75,7 @@ public:
     string str() override;
     int evaluate() override;
     NodeType getNodeType() override;
+    ~BlankNode() override;
 
 protected:
     ASTNode *left;
