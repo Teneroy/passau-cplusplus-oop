@@ -22,30 +22,30 @@ public:
 
 class Multiply : public ASTNode {
 public:
-    std::string str() override { return " (*"; };
-    int evaluate() override { return 0; }
-    NodeType getNodeType() override { return MULTIPLY; }
+    string str() override;
+    int evaluate() override;
+    NodeType getNodeType() override;
 };
 
 class Plus : public ASTNode {
 public:
-    std::string str() override { return " (+"; };
-    int evaluate() override { return 0; }
-    NodeType getNodeType() override { return PLUS; }
+    string str() override;
+    int evaluate() override;
+    NodeType getNodeType() override;
 };
 
 class Divide : public ASTNode {
 public:
-    std::string str() override { return " (/"; };
-    int evaluate() override { return 0; }
-    NodeType getNodeType() override { return DIVIDE; }
+    string str() override;
+    int evaluate() override;
+    NodeType getNodeType() override;
 };
 
 class Minus : public ASTNode {
 public:
-    std::string str() override { return " (-"; };
-    int evaluate() override { return 0; }
-    NodeType getNodeType() override { return MINUS; }
+    string str() override;
+    int evaluate() override;
+    NodeType getNodeType() override;
 };
 
 class Data : public ASTNode {
@@ -53,7 +53,7 @@ public:
     explicit Data(int num);
     std::string str() override;
     int evaluate() override;
-    NodeType getNodeType() override { return DATA; }
+    NodeType getNodeType() override;
 
 private:
     int number;
@@ -61,17 +61,17 @@ private:
 
 class Nil : public ASTNode {
 public:
-    std::string str() override;
+    string str() override;
     int evaluate() override;
-    NodeType getNodeType() override { return NIL; }
+    NodeType getNodeType() override;
 };
 
 class BlankNode : public ASTNode {
 public:
     BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight);
-    std::string str() override;
+    string str() override;
     int evaluate() override;
-    NodeType getNodeType() override { return EMPTY; }
+    NodeType getNodeType() override;
 
 protected:
     ASTNode *left;

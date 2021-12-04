@@ -39,6 +39,10 @@ int BlankNode::evaluate() {
     throw invalid_argument("Your ASTNode tree is not properly structured. It is recommended to use static method build in BuildAST");
 }
 
+NodeType BlankNode::getNodeType() {
+    return EMPTY;
+}
+
 Data::Data(int num) {
     number = num;
 }
@@ -54,12 +58,68 @@ int Data::evaluate() {
     return number;
 }
 
+NodeType Data::getNodeType() {
+    return DATA;
+}
+
 std::string Nil::str() {
     return ")";
 }
 
 int Nil::evaluate() {
     return 0;
+}
+
+NodeType Nil::getNodeType() {
+    return NIL;
+}
+
+string Minus::str() {
+    return " (-";
+}
+
+int Minus::evaluate() {
+    return 0;
+}
+
+NodeType Minus::getNodeType() {
+    return MINUS;
+}
+
+string Divide::str() {
+    return " (/";
+}
+
+int Divide::evaluate() {
+    return 0;
+}
+
+NodeType Divide::getNodeType() {
+    return DIVIDE;
+}
+
+string Plus::str() {
+    return " (+";
+}
+
+int Plus::evaluate() {
+    return 0;
+}
+
+NodeType Plus::getNodeType() {
+    return PLUS;
+}
+
+string Multiply::str() {
+    return " (*";
+}
+
+int Multiply::evaluate() {
+    return 0;
+}
+
+NodeType Multiply::getNodeType() {
+    return MULTIPLY;
 }
 
 ASTNode * BuildAST::build(const string& expr) {
