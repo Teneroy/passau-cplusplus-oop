@@ -84,7 +84,7 @@ protected:
 
 class BuildAST {
 public:
-    static ASTNode * build(const std::string& expr);
+    static ASTNode * build(std::string expr);
 
 private:
     static void tokenize(const std::string& str, std::list<std::string>& tokens);

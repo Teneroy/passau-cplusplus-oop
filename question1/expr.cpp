@@ -125,11 +125,10 @@ NodeType Multiply::getNodeType() {
     return MULTIPLY;
 }
 
-ASTNode * BuildAST::build(const string& expr) {
-    std::string s = expr;
-    s.erase(std::remove_if(s.begin(), s.end(), ::isspace), s.end());
+ASTNode * BuildAST::build(string expr) {
+    expr.erase(std::remove_if(expr.begin(), expr.end(), ::isspace), expr.end());
     std::list<std::string> tokens;
-    tokenize(s, tokens);
+    tokenize(expr, tokens);
     return expression(tokens.front(), tokens);
 }
 
@@ -156,12 +155,11 @@ void BuildAST::tokenize(const string& str, list<string>& tokens) {
 }
 
 string BuildAST::nextStep(list<string> &tokens) {
-    string currentToken;
     tokens.pop_front();
     if (!tokens.empty()) {
-        currentToken = tokens.front();
+        return tokens.front();
     }
-    return currentToken;
+    return "";
 }
 
 ASTNode * BuildAST::expression(string &currentToken, list<string> &tokens) {
