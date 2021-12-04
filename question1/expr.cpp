@@ -4,19 +4,19 @@
 
 #include "expr.h"
 
-BlankNode::BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight) {
+ast::BlankNode::BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight) {
     left = nodeLeft;
     right = nodeRight;
 }
 
-string BlankNode::str() {
+string ast::BlankNode::str() {
     std::string result;
     result.append(left -> str());
     result.append(right -> str());
     return result;
 }
 
-int BlankNode::evaluate() {
+int ast::BlankNode::evaluate() {
     if(right -> getNodeType() == NIL) {
         return left -> evaluate();
     }
@@ -37,102 +37,102 @@ int BlankNode::evaluate() {
     throw invalid_argument("Your ASTNode tree is not properly structured. It is recommended to use static method build in BuildAST");
 }
 
-NodeType BlankNode::getNodeType() {
+ast::NodeType ast::BlankNode::getNodeType() {
     return EMPTY;
 }
 
-BlankNode::~BlankNode() {
+ast::BlankNode::~BlankNode() {
     delete left;
     delete right;
 }
 
-Data::Data(int num) {
+ast::Data::Data(int num) {
     number = num;
 }
 
-string Data::str() {
+string ast::Data::str() {
     std::string result;
     result.append(" ");
     result.append(to_string(number));
     return result;
 }
 
-int Data::evaluate() {
+int ast::Data::evaluate() {
     return number;
 }
 
-NodeType Data::getNodeType() {
+ast::NodeType ast::Data::getNodeType() {
     return DATA;
 }
 
-std::string Nil::str() {
+std::string ast::Nil::str() {
     return ")";
 }
 
-int Nil::evaluate() {
+int ast::Nil::evaluate() {
     return 0;
 }
 
-NodeType Nil::getNodeType() {
+ast::NodeType ast::Nil::getNodeType() {
     return NIL;
 }
 
-string Minus::str() {
+string ast::Minus::str() {
     return " (-";
 }
 
-int Minus::evaluate() {
+int ast::Minus::evaluate() {
     return 0;
 }
 
-NodeType Minus::getNodeType() {
+ast::NodeType ast::Minus::getNodeType() {
     return MINUS;
 }
 
-string Divide::str() {
+string ast::Divide::str() {
     return " (/";
 }
 
-int Divide::evaluate() {
+int ast::Divide::evaluate() {
     return 0;
 }
 
-NodeType Divide::getNodeType() {
+ast::NodeType ast::Divide::getNodeType() {
     return DIVIDE;
 }
 
-string Plus::str() {
+string ast::Plus::str() {
     return " (+";
 }
 
-int Plus::evaluate() {
+int ast::Plus::evaluate() {
     return 0;
 }
 
-NodeType Plus::getNodeType() {
+ast::NodeType ast::Plus::getNodeType() {
     return PLUS;
 }
 
-string Multiply::str() {
+string ast::Multiply::str() {
     return " (*";
 }
 
-int Multiply::evaluate() {
+int ast::Multiply::evaluate() {
     return 0;
 }
 
-NodeType Multiply::getNodeType() {
+ast::NodeType ast::Multiply::getNodeType() {
     return MULTIPLY;
 }
 
-ASTNode * BuildAST::build(string expr) {
+ast::ASTNode * ast::BuildAST::build(string expr) {
     expr.erase(std::remove_if(expr.begin(), expr.end(), ::isspace), expr.end());
     std::list<std::string> tokens;
     tokenize(expr, tokens);
     return expression(tokens.front(), tokens);
 }
 
-void BuildAST::tokenize(const string& str, list<string>& tokens) {
+void ast::BuildAST::tokenize(const string& str, list<string>& tokens) {
     std::string num;
     for (char c : str) {
         if (isdigit(c)) {
@@ -154,7 +154,7 @@ void BuildAST::tokenize(const string& str, list<string>& tokens) {
     }
 }
 
-string BuildAST::nextStep(list<string> &tokens) {
+string ast::BuildAST::nextStep(list<string> &tokens) {
     tokens.pop_front();
     if (!tokens.empty()) {
         return tokens.front();
@@ -162,7 +162,7 @@ string BuildAST::nextStep(list<string> &tokens) {
     return "";
 }
 
-ASTNode * BuildAST::expression(string &currentToken, list<string> &tokens) {
+ast::ASTNode * ast::BuildAST::expression(string &currentToken, list<string> &tokens) {
     ASTNode * result = term(currentToken, tokens);
     while (currentToken == "+" || currentToken == "-") {
         if (currentToken == "+") {
@@ -177,7 +177,7 @@ ASTNode * BuildAST::expression(string &currentToken, list<string> &tokens) {
     return result;
 }
 
-ASTNode * BuildAST::term(string &currentToken, list<string> &tokens) {
+ast::ASTNode * ast::BuildAST::term(string &currentToken, list<string> &tokens) {
     ASTNode * result = factor(currentToken, tokens);
     while (currentToken == "*" || currentToken == "/") {
         if (currentToken == "*") {
@@ -192,7 +192,7 @@ ASTNode * BuildAST::term(string &currentToken, list<string> &tokens) {
     return result;
 }
 
-ASTNode * BuildAST::factor(string &currentToken, list<string> &tokens) {
+ast::ASTNode * ast::BuildAST::factor(string &currentToken, list<string> &tokens) {
     ASTNode * result;
 
     if (currentToken == "(") {
@@ -207,7 +207,7 @@ ASTNode * BuildAST::factor(string &currentToken, list<string> &tokens) {
     return result;
 }
 
-ASTNode *BuildAST::linkNodes(ASTNode * factor, ASTNode * node, ASTNode * action) {
+ast::ASTNode * ast::BuildAST::linkNodes(ASTNode * factor, ASTNode * node, ASTNode * action) {
     ASTNode * rightNode = new BlankNode(
             node,
             new BlankNode(factor, new Nil)

@@ -8,10 +8,9 @@ using namespace std;
 
 int main() {
     string input;
-//    cout << "Input: ";
-//    getline(cin, input);
-    input = "2 + 3 * 20 + (2 - 1)";
-    ASTNode * node = BuildAST::build(input);
+    cout << "Input: ";
+    getline(cin, input);
+    ast::ASTNode * node = ast::BuildAST::build(input);
     cout << "S-expression: " << node -> str() << endl;
     cout << "Output: " << node -> evaluate() << endl;
     delete node;

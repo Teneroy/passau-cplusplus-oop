@@ -13,86 +13,90 @@
 
 using namespace std;
 
-enum NodeType {PLUS, MINUS, MULTIPLY, DIVIDE, DATA, NIL, EMPTY};
+namespace ast {
 
-class ASTNode {
-public:
-    virtual ~ASTNode() = default;
-    virtual std::string str() = 0;
-    virtual int evaluate() = 0;
-    virtual NodeType getNodeType() = 0;
-};
+    enum NodeType {PLUS, MINUS, MULTIPLY, DIVIDE, DATA, NIL, EMPTY};
 
-class Multiply : public ASTNode {
-public:
-    string str() override;
-    int evaluate() override;
-    NodeType getNodeType() override;
-};
+    class ASTNode {
+    public:
+        virtual ~ASTNode() = default;
+        virtual string str() = 0;
+        virtual int evaluate() = 0;
+        virtual NodeType getNodeType() = 0;
+    };
 
-class Plus : public ASTNode {
-public:
-    string str() override;
-    int evaluate() override;
-    NodeType getNodeType() override;
-};
+    class Multiply : public ASTNode {
+    public:
+        string str() override;
+        int evaluate() override;
+        NodeType getNodeType() override;
+    };
 
-class Divide : public ASTNode {
-public:
-    string str() override;
-    int evaluate() override;
-    NodeType getNodeType() override;
-};
+    class Plus : public ASTNode {
+    public:
+        string str() override;
+        int evaluate() override;
+        NodeType getNodeType() override;
+    };
 
-class Minus : public ASTNode {
-public:
-    string str() override;
-    int evaluate() override;
-    NodeType getNodeType() override;
-};
+    class Divide : public ASTNode {
+    public:
+        string str() override;
+        int evaluate() override;
+        NodeType getNodeType() override;
+    };
 
-class Data : public ASTNode {
-public:
-    explicit Data(int num);
-    std::string str() override;
-    int evaluate() override;
-    NodeType getNodeType() override;
+    class Minus : public ASTNode {
+    public:
+        string str() override;
+        int evaluate() override;
+        NodeType getNodeType() override;
+    };
 
-private:
-    int number;
-};
+    class Data : public ASTNode {
+    public:
+        explicit Data(int num);
+        string str() override;
+        int evaluate() override;
+        NodeType getNodeType() override;
 
-class Nil : public ASTNode {
-public:
-    string str() override;
-    int evaluate() override;
-    NodeType getNodeType() override;
-};
+    private:
+        int number;
+    };
 
-class BlankNode : public ASTNode {
-public:
-    BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight);
-    string str() override;
-    int evaluate() override;
-    NodeType getNodeType() override;
-    ~BlankNode() override;
+    class Nil : public ASTNode {
+    public:
+        string str() override;
+        int evaluate() override;
+        NodeType getNodeType() override;
+    };
 
-protected:
-    ASTNode *left;
-    ASTNode *right;
-};
+    class BlankNode : public ASTNode {
+    public:
+        BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight);
+        string str() override;
+        int evaluate() override;
+        NodeType getNodeType() override;
+        ~BlankNode() override;
 
-class BuildAST {
-public:
-    static ASTNode * build(std::string expr);
+    protected:
+        ASTNode *left;
+        ASTNode *right;
+    };
 
-private:
-    static void tokenize(const std::string& str, std::list<std::string>& tokens);
-    static string nextStep(std::list<std::string>& tokens);
-    static ASTNode * expression(string &currentToken, list<string> &tokens);
-    static ASTNode * term(string &currentToken, list<string> &tokens);
-    static ASTNode * factor(string &currentToken, list<string> &tokens);
-    static ASTNode * linkNodes(ASTNode * factor, ASTNode * node, ASTNode * action);
-};
+    class BuildAST {
+    public:
+        static ASTNode * build(string expr);
+
+    private:
+        static void tokenize(const string& str, list<string>& tokens);
+        static string nextStep(list<string>& tokens);
+        static ASTNode * expression(string &currentToken, list<string> &tokens);
+        static ASTNode * term(string &currentToken, list<string> &tokens);
+        static ASTNode * factor(string &currentToken, list<string> &tokens);
+        static ASTNode * linkNodes(ASTNode * factor, ASTNode * node, ASTNode * action);
+    };
+
+}
 
 #endif //PASSAU_CPLUSPLUS_OOP_EXPR_H
