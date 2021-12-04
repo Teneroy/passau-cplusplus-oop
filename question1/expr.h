@@ -11,41 +11,41 @@
 
 using namespace std;
 
+enum NodeType {PLUS, MINUS, MULTIPLY, DIVIDE, DATA, NIL, EMPTY};
+
 class ASTNode {
 public:
     virtual std::string str() = 0;
     virtual int evaluate() = 0;
-};
-
-class BlankNode : public ASTNode {
-public:
-    BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight);
-    std::string str() override;
-    int evaluate() override;
-
-protected:
-    ASTNode *left;
-    ASTNode *right;
+    virtual NodeType getNodeType() = 0;
 };
 
 class Multiply : public ASTNode {
+public:
     std::string str() override { return " (*"; };
     int evaluate() override { return 0; }
+    NodeType getNodeType() override { return MULTIPLY; }
 };
 
 class Plus : public ASTNode {
+public:
     std::string str() override { return " (+"; };
     int evaluate() override { return 0; }
+    NodeType getNodeType() override { return PLUS; }
 };
 
 class Divide : public ASTNode {
+public:
     std::string str() override { return " (/"; };
     int evaluate() override { return 0; }
+    NodeType getNodeType() override { return DIVIDE; }
 };
 
 class Minus : public ASTNode {
+public:
     std::string str() override { return " (-"; };
     int evaluate() override { return 0; }
+    NodeType getNodeType() override { return MINUS; }
 };
 
 class Data : public ASTNode {
@@ -53,6 +53,7 @@ public:
     explicit Data(int num);
     std::string str() override;
     int evaluate() override;
+    NodeType getNodeType() override { return DATA; }
 
 private:
     int number;
@@ -62,8 +63,20 @@ class Nil : public ASTNode {
 public:
     std::string str() override;
     int evaluate() override;
+    NodeType getNodeType() override { return NIL; }
 };
 
+class BlankNode : public ASTNode {
+public:
+    BlankNode(ASTNode *nodeLeft, ASTNode *nodeRight);
+    std::string str() override;
+    int evaluate() override;
+    NodeType getNodeType() override { return EMPTY; }
+
+protected:
+    ASTNode *left;
+    ASTNode *right;
+};
 
 class BuildAST {
 public:

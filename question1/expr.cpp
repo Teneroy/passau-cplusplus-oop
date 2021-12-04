@@ -19,7 +19,24 @@ string BlankNode::str() {
 }
 
 int BlankNode::evaluate() {
-    return 0;
+    if(right -> getNodeType() == NIL) {
+        return left -> evaluate();
+    }
+    auto * node = dynamic_cast<BlankNode*>(right);
+    if(node == nullptr) {
+        throw invalid_argument("Your ASTNode tree is not properly structured. It is recommended to use static method build in BuildAST");
+    }
+    switch (left -> getNodeType()) {
+        case MULTIPLY:
+            return node -> left -> evaluate() * node -> right -> evaluate();
+        case DIVIDE:
+            return node -> left -> evaluate() / node -> right -> evaluate();
+        case PLUS:
+            return node -> left -> evaluate() + node -> right -> evaluate();
+        case MINUS:
+            return node -> left -> evaluate() - node -> right -> evaluate();
+    }
+    throw invalid_argument("Your ASTNode tree is not properly structured. It is recommended to use static method build in BuildAST");
 }
 
 Data::Data(int num) {
@@ -29,12 +46,12 @@ Data::Data(int num) {
 string Data::str() {
     std::string result;
     result.append(" ");
-    result.append(std::to_string(number));
+    result.append(to_string(number));
     return result;
 }
 
 int Data::evaluate() {
-    return 0;
+    return number;
 }
 
 std::string Nil::str() {
