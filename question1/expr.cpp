@@ -164,44 +164,34 @@ string ast::BuildAST::nextStep(list<string> &tokens) {
 
 ast::ASTNode * ast::BuildAST::expression(string &currentToken, list<string> &tokens) {
     ASTNode * result = term(currentToken, tokens);
-    while (currentToken == "+" || currentToken == "-") {
-        if (currentToken == "+") {
-            currentToken = nextStep(tokens);
-            result = linkNodes(term(currentToken, tokens), result, new Plus);
-        }
-        if (currentToken == "-") {
-            currentToken = nextStep(tokens);
-            //result = linkNodes(term(currentToken, tokens), result, new Minus);
-            result = linkNodes(expression(currentToken, tokens), result, new Minus);
-        }
+    if (currentToken != "+" && currentToken != "-") {
+        return result;
+    }
+    if (currentToken == "+") {
+        currentToken = nextStep(tokens);
+        result = linkNodes(term(currentToken, tokens), result, new Plus);
+    }
+    if (currentToken == "-") {
+        currentToken = nextStep(tokens);
+        result = linkNodes(expression(currentToken, tokens), result, new Minus);
     }
     return result;
 }
 
 ast::ASTNode * ast::BuildAST::term(string &currentToken, list<string> &tokens) {
     ASTNode * result = div(currentToken, tokens);
-    while (currentToken == "*") {
-        if (currentToken == "*") {
-            currentToken = nextStep(tokens);
-            result = linkNodes(div(currentToken, tokens), result, new Multiply);
-        }
-//        if (currentToken == "/") {
-//            currentToken = nextStep(tokens);
-//            result = linkNodes(factor(currentToken, tokens), result, new Divide);
-//            //result = linkNodes(term(currentToken, tokens), result, new Divide);
-//        }
+    if (currentToken == "*") {
+        currentToken = nextStep(tokens);
+        result = linkNodes(div(currentToken, tokens), result, new Multiply);
     }
     return result;
 }
 
 ast::ASTNode * ast::BuildAST::div(string &currentToken, list<string> &tokens) {
     ASTNode * result = factor(currentToken, tokens);
-    while (currentToken == "/") {
-        if (currentToken == "/") {
-            currentToken = nextStep(tokens);
-            //result = linkNodes(factor(currentToken, tokens), result, new Divide);
-            result = linkNodes(div(currentToken, tokens), result, new Divide);
-        }
+    if (currentToken == "/") {
+        currentToken = nextStep(tokens);
+        result = linkNodes(div(currentToken, tokens), result, new Divide);
     }
     return result;
 }
