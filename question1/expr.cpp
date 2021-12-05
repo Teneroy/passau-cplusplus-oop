@@ -171,22 +171,36 @@ ast::ASTNode * ast::BuildAST::expression(string &currentToken, list<string> &tok
         }
         if (currentToken == "-") {
             currentToken = nextStep(tokens);
-            result = linkNodes(term(currentToken, tokens), result, new Minus);
+            //result = linkNodes(term(currentToken, tokens), result, new Minus);
+            result = linkNodes(expression(currentToken, tokens), result, new Minus);
         }
     }
     return result;
 }
 
 ast::ASTNode * ast::BuildAST::term(string &currentToken, list<string> &tokens) {
-    ASTNode * result = factor(currentToken, tokens);
-    while (currentToken == "*" || currentToken == "/") {
+    ASTNode * result = div(currentToken, tokens);
+    while (currentToken == "*") {
         if (currentToken == "*") {
             currentToken = nextStep(tokens);
-            result = linkNodes(factor(currentToken, tokens), result, new Multiply);
+            result = linkNodes(div(currentToken, tokens), result, new Multiply);
         }
+//        if (currentToken == "/") {
+//            currentToken = nextStep(tokens);
+//            result = linkNodes(factor(currentToken, tokens), result, new Divide);
+//            //result = linkNodes(term(currentToken, tokens), result, new Divide);
+//        }
+    }
+    return result;
+}
+
+ast::ASTNode * ast::BuildAST::div(string &currentToken, list<string> &tokens) {
+    ASTNode * result = factor(currentToken, tokens);
+    while (currentToken == "/") {
         if (currentToken == "/") {
             currentToken = nextStep(tokens);
-            result = linkNodes(factor(currentToken, tokens), result, new Divide);
+            //result = linkNodes(factor(currentToken, tokens), result, new Divide);
+            result = linkNodes(div(currentToken, tokens), result, new Divide);
         }
     }
     return result;

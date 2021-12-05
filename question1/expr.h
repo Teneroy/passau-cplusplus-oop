@@ -93,6 +93,7 @@ namespace ast {
         static string nextStep(list<string>& tokens);
         static ASTNode * expression(string &currentToken, list<string> &tokens);
         static ASTNode * term(string &currentToken, list<string> &tokens);
+        static ASTNode * div(string &currentToken, list<string> &tokens);
         static ASTNode * factor(string &currentToken, list<string> &tokens);
         static ASTNode * linkNodes(ASTNode * factor, ASTNode * node, ASTNode * action);
     };
