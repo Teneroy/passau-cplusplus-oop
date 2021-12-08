@@ -164,23 +164,22 @@ string ast::BuildAST::nextStep(list<string> &tokens) {
 
 ast::ASTNode * ast::BuildAST::expression(string &currentToken, list<string> &tokens) {
     ASTNode * result = term(currentToken, tokens);
-    if (currentToken != "+" && currentToken != "-") {
-        return result;
-    }
-    if (currentToken == "+") {
-        currentToken = nextStep(tokens);
-        result = linkNodes(term(currentToken, tokens), result, new Plus);
-    }
-    if (currentToken == "-") {
-        currentToken = nextStep(tokens);
-        result = linkNodes(expression(currentToken, tokens), result, new Minus);
+    while (currentToken == "+" || currentToken == "-") {
+        if (currentToken == "+") {
+            currentToken = nextStep(tokens);
+            result = linkNodes(term(currentToken, tokens), result, new Plus);
+        }
+        if (currentToken == "-") {
+            currentToken = nextStep(tokens);
+            result = linkNodes(expression(currentToken, tokens), result, new Minus);
+        }
     }
     return result;
 }
 
 ast::ASTNode * ast::BuildAST::term(string &currentToken, list<string> &tokens) {
     ASTNode * result = div(currentToken, tokens);
-    if (currentToken == "*") {
+    while (currentToken == "*") {
         currentToken = nextStep(tokens);
         result = linkNodes(div(currentToken, tokens), result, new Multiply);
     }
