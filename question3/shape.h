@@ -7,7 +7,8 @@
 
 class Shape {
 public:
-    virtual double area() { return 0.0; };
+    virtual ~Shape() = default;
+    virtual double area() = 0;
 };
 
 #endif //PASSAU_CPLUSPLUS_OOP_SHAPE_H
