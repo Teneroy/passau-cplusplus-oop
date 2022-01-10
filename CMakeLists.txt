@@ -4,4 +4,5 @@ project(passau_cplusplus_oop)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(passau_cplusplus_oop
-        ./question3/tuple.cpp)
+        ./question4/sharedq.cpp
+        ./question4/main.cpp)

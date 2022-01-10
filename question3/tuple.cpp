@@ -38,9 +38,6 @@ public:
     Triple(int t, int u, int v) : Pair(t, u), third(v) {}
 
     Triple& operator=(const Pair& rhs) {
-        if(this == &rhs) {
-            return *this;
-        }
         Pair::operator=(rhs);
         third = 0;
         return *this;
@@ -53,6 +50,12 @@ public:
         Pair::operator=(rhs);
         third = rhs.third;
         return *this;
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Triple &rhs)
+    {
+        os << "(" << rhs.first << ", " << rhs.second << ", " << rhs.third << ")";
+        return os;
     }
 };
 

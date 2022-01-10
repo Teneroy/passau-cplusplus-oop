@@ -55,10 +55,8 @@ int SafeInt::operator()() const {
 
 
 int main() {
-    std::cout << "MAX: " << std::numeric_limits<int>::max() << std::endl;
-    std::cout << "MIN: " << std::numeric_limits<int>::min() << std::endl;
-    SafeInt s1(4);
-    SafeInt s2(3);
+    SafeInt s1(5);
+    SafeInt s2(10);
     SafeInt s3 = s1 + s2;
     std::cout << "s1 + s2 = " << s3 << std::endl;
     s3 = s1 - s2;
