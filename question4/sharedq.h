@@ -8,7 +8,7 @@ class SharedQueue
 private:
     std::deque<int> elems;
     SharedQueue() {}
-    static int reference_count;
+    static unsigned int reference_count;
 
 public:
     SharedQueue(const SharedQueue &);

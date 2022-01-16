@@ -21,7 +21,6 @@ public:
     friend SafeInt operator * (const SafeInt& val1, const SafeInt& val2);
     SafeInt& operator++();
     int operator()() const;
-    // Define the functions here
 };
 
 

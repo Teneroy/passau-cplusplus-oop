@@ -1,7 +1,7 @@
 #include "sharedq.h"
 #include <stdexcept>
 
-int SharedQueue::reference_count;
+unsigned int SharedQueue::reference_count;
 
 void SharedQueue::enqueue(int i)
 {
