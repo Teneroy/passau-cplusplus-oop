@@ -90,6 +90,25 @@ constexpr auto equalityU(std::tuple<Ts...> const & t1)  {
 
 /* Task 4 */
 
-
+template <size_t I = 1, typename... Ts>
+constexpr bool matMulPossible(std::tuple<Ts...> tup)
+{
+    // If we have iterated through all elements
+    if
+    constexpr(I >= sizeof...(Ts))
+    {
+        // Last case, if nothing is left to
+        // iterate, then exit the function
+        return true;
+    }
+    else {
+        auto p1 = std::get<I - 1>(tup);
+        auto p2 = std::get<I>(tup);
+        if(std::get<1>(p1) != std::get<0>(p2)) {
+            return false;
+        }
+        return matMulPossible<I + 2>(tup);
+    }
+}
 
 #endif //PASSAU_CPLUSPLUS_OOP_UTILS_H
