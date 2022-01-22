@@ -1,44 +1,42 @@
-//
-// Created by studone on 11/20/21.
-//
-
+#include <functional>
 #include <iostream>
-#include <vector>
-#include "./question2/queue.h"
-using namespace std;
+#include <tuple>
+#include <type_traits>
+#include <variant>
+#include <any>
+#include "./question1/utils.h"
+
+
+
 
 int main() {
-    queue::Queue<int, 2> q;
-    for (int i = 0; i < 3; i++)
-    {
-        try
-        {
-            q.enqueue(67+i);
-        }
-        catch (queue::QOverflow &e)
-        {
-            std::cout << "Queue overflow" << std::endl;
-        }
-    }
-    for (int i = 0; i < 2; i++)
-    {
-        try
-        {
-            std::cout << q.dequeue() << std::endl;
-        }
-        catch (queue::QUnderflow &e)
-        {
-            std::cout << "Queue is empty" << std::endl;
-        }
-    }
-    std::cout << q << std::endl;
-    std::cout << q.size() << std::endl;
+//    std::vector<int> a = {1,2,3,4,5};
+//    std::vector<int> b = {6,7,8,9,10};
+//    // get all odd numbers from a and b
+//    auto c = unionAndFilterContainer(a,b, [](int x){return x%2==0;});
+//    if (std::all_of(c.begin(), c.end(), [](auto x){ return x%2==0;}))
+//        std::cout << "QUESTION 2 PASSED" << std::endl;
+//    else
+//        std::cout << "QUESTION 2 FAILED" << std::endl;
+//
+//    std::cout << std::endl;
+//    constexpr unsigned v = Ackermann<0, 1>::value;
+//    std::cout << v << std::endl;
+//    std::cout << ackermann<1,2>() << std::endl;
+//
+//    int result = sum(1, 2, 3); //  6
+//    std::cout << result << std::endl;
 
-    q.enqueue(67);
-    q.enqueue(68);
+    std::tuple<int, char, int, bool> t;
+    std::tuple<int, int, int, int> t2;
+    std::tuple<bool, bool, bool> t3;
+    t = std::make_tuple(1, 'a', 2, true);
+    t2 = std::make_tuple(1, 1, 1, 1);
+    t3 = std::make_tuple(true, true, true);
+    auto a = equalityU(t);
+    auto a1 = equalityU(t2);
+    auto a2 = equalityU(t3);
+    std::cout << a << std::endl;
+//    std::cout << equalityU(t, ) << std::endl;
 
-    // call the function here to cast the queue
-    cout << q.cast<float>().dequeue() / 2 << endl;
-    cout << q.dequeue() / 2 << endl;
-    return 0;
 }
