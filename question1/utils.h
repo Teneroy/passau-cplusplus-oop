@@ -15,23 +15,18 @@ template <unsigned m, unsigned n, bool cond, bool cond2>
 struct AckermannBase {};
 
 template <unsigned m, unsigned n>
-struct Ackermann : AckermannBase<m, n, (m == 0), (n == 0)> {};
+struct ackermann : AckermannBase<m, n, (m == 0), (n == 0)> {};
 
 template <unsigned m, unsigned n>
-struct AckermannBase<m, n, false, true> : Ackermann<m - 1, 1> {};
+struct AckermannBase<m, n, false, true> : ackermann<m - 1, 1> {};
 
 template <unsigned m, unsigned n>
-struct AckermannBase<m, n, false, false> : Ackermann<m - 1, Ackermann<m, n - 1>::value> {};
+struct AckermannBase<m, n, false, false> : ackermann<m - 1, ackermann<m, n - 1>::result> {};
 
 template <unsigned m, unsigned n, bool cond2>
 struct AckermannBase<m, n, true, cond2> {
-    static const unsigned value = n + 1;
+    static const unsigned result = n + 1;
 };
-
-template <unsigned m, unsigned n>
-unsigned ackermann() {
-    return Ackermann<m, n>::value;
-}
 
 
 /* Task 2 */
@@ -73,10 +68,6 @@ constexpr auto equalityU(std::tuple<Ts...> const & t1)  {
     bool equals = true;
     fold<0>(
             [&equals](auto a, auto b) {
-                if(typeid(a) != typeid(b)) {
-                    equals = false;
-                    return b;
-                }
                 auto val = performe(std::equal_to<>{}, a, b);
                 if(val == false) {
                     equals = false;
@@ -93,12 +84,9 @@ constexpr auto equalityU(std::tuple<Ts...> const & t1)  {
 template <size_t I = 1, typename... Ts>
 constexpr bool matMulPossible(std::tuple<Ts...> tup)
 {
-    // If we have iterated through all elements
     if
     constexpr(I >= sizeof...(Ts))
     {
-        // Last case, if nothing is left to
-        // iterate, then exit the function
         return true;
     }
     else {

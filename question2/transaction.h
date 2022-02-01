@@ -34,10 +34,8 @@ public:
     TransactionList sort();
 };
 
-// Comparator Class to compare 2 objects
 class TransactionRecComp {
 public:
-    // Comparator function
     bool operator()(const Transaction& a, const Transaction& b);
 };
 
@@ -53,8 +51,8 @@ public:
         os << std::setw(15) << std::right << "Account Nb: " << std::setw(50) << std::right << obj.acc_nb << std::endl;
         os << std::setw(15) << std::right << "First Name: " << std::setw(50) << std::right << obj.fname << std::endl;
         os << std::setw(15) << std::right << "Last Name: " << std::setw(50) << std::right << obj.lname << std::endl;
-        os.imbue(std::locale("en_US.utf-8"));
-        os << std::setw(15) << std::right << "Amount: " << std::setw(46) << std::right << std::put_money(obj.amt * 100) << std::setw(4) << " EUR" << std::endl;
+        os.imbue(std::locale("de_DE.UTF-8"));
+        os << std::setw(15) << std::right << "Amount: " << std::setw(47) << std::right << std::put_money(obj.amt ) << std::setw(3) << "EUR" << std::endl;
         os << std::setw(15) << std::right << "Merchant: " << std::setw(50) << std::right << obj.merchant << std::endl;
         os << std::setw(15) << std::right << "Date Time: " << std::setw(33) << "" << time_s << std::endl;
         os.flush();
@@ -65,5 +63,5 @@ private:
 };
 
 inline std::ostream& operator<<(std::ostream& os, const display& dp) {
-    return dp(os); // Functor call
+    return dp(os);
 }

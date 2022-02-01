@@ -1,14 +1,11 @@
 #include "transaction.h"
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <ctime>
 #include <iomanip>
 #include <algorithm>
 
-TransactionList::TransactionList() {
-
-}
+TransactionList::TransactionList() = default;
 
 void TransactionList::parseFile(const std::string& filename) {
     std::ifstream filestream(filename);
@@ -17,7 +14,6 @@ void TransactionList::parseFile(const std::string& filename) {
     }
     transactions.clear();
     for (std::string line; std::getline(filestream, line);) {
-        std::cout << line << std::endl;
         transactions.push_back(parseRecord(line));
     }
 }
@@ -68,8 +64,9 @@ int main()
     TransactionList tl;
     tl.parseFile("/home/studone/PassauOOP/passau-cplusplus-oop/question2/transactions.txt");
     tl.sort();
-    Transaction t = *tl.begin();
-    std::cout << display(t) << std::endl;
+    for (auto & it : tl) {
+        std::cout << display(it) << std::endl;
+    }
     return 0;
 }
 
