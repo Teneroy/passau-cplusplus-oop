@@ -1,28 +1,112 @@
-#include "utils.h"
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <random>
+#include <queue>
+#include <mutex>
+#include <atomic>
+
+inline std::mutex monitor;
+std::atomic<bool> finished = false;
+
+class WaitingRoomQueue
+{
+private:
+    std::deque<int> elems;
+    WaitingRoomQueue() = default;
+
+public:
+    void enqueue(int i) {
+        elems.push_back(i);
+    }
+    int dequeue() {
+        int i = elems.front();
+        elems.pop_front();
+        return i;
+    }
+    bool empty() {
+        return elems.empty();
+    }
+    int size() {
+        return static_cast<int> (elems.size());
+    }
+    static WaitingRoomQueue &getInstance() {
+        static WaitingRoomQueue sharedQueue;
+        return sharedQueue;
+    }
+};
+
+class ThreadGroup {
+public:
+    ThreadGroup() = default;
+    ThreadGroup(const ThreadGroup&) = delete;
+    ThreadGroup& operator=(const ThreadGroup&) = delete;
+    template <typename F> void add_thread(F& f, int id) {
+        threads.emplace_back(std::ref(f), id); // Thread speichern und starten
+    }
+    void join_all() { // Auf Beendigung aller Threads warten
+        for (auto& t : threads) {
+            t.join();
+        }
+    }
+    std::size_t size() const { return threads.size(); }
+private:
+    std::vector<std::thread> threads;
+};
+
+void treatPatient()
+{
+    monitor.lock();
+    int i = WaitingRoomQueue::getInstance().dequeue();
+    monitor.unlock();
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<double> dist(1, 5); //range is 20 to 22
+    int time_treat = static_cast<int>(dist(mt));
+    //int time_treat = 5;
+    std::cout << "treating a patient with id: " << i << " for " << time_treat << " seconds" << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(time_treat));
+}
+
+void getRest()
+{
+    std::cout << "Doctor is taking a rest before patients arrive" << std::endl;
+    while (!finished || !WaitingRoomQueue::getInstance().empty()) {
+        monitor.lock();
+        bool hasPatients = WaitingRoomQueue::getInstance().empty();
+        monitor.unlock();
+        if(!hasPatients) {
+            treatPatient();
+        }
+    }
+    std::cout << "doctor's day is finished" << std::endl;
+}
+
+void waitingRoom(int i)
+{
+    std::lock_guard<std::mutex> lock(monitor);
+    if(WaitingRoomQueue::getInstance().size() == 5) {
+        std::cout << "waiting room is full, patient with id: " << i << " left home" << std::endl;
+        return;
+    }
+
+    WaitingRoomQueue::getInstance().enqueue(i);
+    std::cout << "patient with id: " << i << " is waiting for treatment" << std::endl;
+}
 
 int main() {
-    std::vector<int> a = {1,2,3,4,5};
-    std::vector<int> b = {6,7,8,9,10};
-    // get all odd numbers from a and b
-    auto c = unionAndFilterContainer(a,b, [](int x){return x%2==0;});
-    if (std::all_of(c.begin(), c.end(), [](auto x){ return x%2==0;}))
-        std::cout << "QUESTION 2 PASSED" << std::endl;
-    else
-        std::cout << "QUESTION 2 FAILED" << std::endl;
+    ThreadGroup threadGroup;
+    std::thread doctor(getRest);
 
-    std::cout << std::endl;
-    std::cout << ackermann<1,2>::result << std::endl;
+    for(int i = 0; i < 40; i++) {
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        threadGroup.add_thread(waitingRoom, i);
+    }
+    finished = true;
 
-    std::tuple<int, char> t1;
-    std::tuple<int, int, int, int> t2;
-    std::tuple<int, int, int, bool> t3;
-    t1 = std::make_tuple(65, 'A');
-    t2 = std::make_tuple(1, 1, 1, 1);
-    t3 = std::make_tuple(1, 1, 1, false);
-    std::cout << "t1's parameters: " << equalityU(t1) << std::endl;
-    std::cout << "t2's parameters: " << equalityU(t2) << std::endl;
-    std::cout << "t3's parameters: " << equalityU(t3) << std::endl;
+    threadGroup.join_all();
+    std::cout << threadGroup.size() << std::endl;
+    doctor.join();
 
-    auto matrix_tuple = std::make_tuple(std::make_pair(3, 4), std::make_pair(4, 5), std::make_pair(4, 5), std::make_pair(5, 4));
-    std::cout << matMulPossible(matrix_tuple) << std::endl;
+    return 0;
 }
