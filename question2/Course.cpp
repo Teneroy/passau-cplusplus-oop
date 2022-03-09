@@ -9,6 +9,11 @@ Course::Course(std::string name, std::string id, int credit) : courseName(std::m
 
 std::vector<Student*> Course::all_students;
 
+std::map<int, char> ProjectCourse::gradeMap;
+std::map<int, char> HybridCourse::gradeMap;
+std::map<int, char> WrittenCourse::gradeMap;
+
+
 std::string Course::getID() const {
     return courseID;
 }
@@ -27,8 +32,6 @@ Student *Course::find_student_by_id(const std::string &id) {
             [&id](const Student * x) { return x->getStudID() == id;});
     if (it != all_students.end())
     {
-        // found element. it is an iterator to the first matching element.
-        // if you really need the index, you can also get it:
         auto index = std::distance(all_students.begin(), it);
         return all_students[index];
     }
@@ -65,12 +68,51 @@ std::vector<Student *> Course::getAllStudents() {
     return all_students;
 }
 
-float WrittenCourse::finalResult(Student*) {
-    return 0;
+std::vector<Student *> Course::getStudents() {
+    return students;
 }
 
-std::string WrittenCourse::grade(Student*) {
-    return std::string();
+Course::~Course() {
+    for (const auto &item : students) {
+        item->remove_course(this);
+    }
+}
+
+void Course::remove_student(Student *student) {
+    std::remove(students.begin(), students.end(), student);
+    remove_from_student_map(student);
+}
+
+void Course::remove_student_from_all(Student *student) {
+    std::remove(all_students.begin(), all_students.end(), student);
+}
+
+template<typename T>
+T findStudentInMap(Student * student, std::map<Student*, T, comp>& studMap) {
+    for (const auto &item : studMap) {
+        auto z = item;
+        if (z.first == student) {
+            return z.second;
+        }
+    }
+    throw std::runtime_error("Can't find this student!");
+}
+
+WrittenCourse::WrittenCourse(std::string name, std::string id, int credit) : Course(name, id, credit) {
+    precomputeGradeMapWritten(gradeMap);
+}
+
+float WrittenCourse::finalResult(Student* student) {
+    auto gradesTuple = findStudentInMap<std::tuple<float, float>>(student, studentsMap);
+    std::tuple<float, float> b = std::make_tuple(std::get<0>(gradesTuple), std::get<1>(gradesTuple));
+    return calculateWritten(b);
+}
+
+std::string WrittenCourse::grade(Student* student) {
+    int res = finalResult(student);
+    char grade = gradeMap.find(res)->second;
+    std::string grade_str(1, grade);
+    return grade_str;
 }
 
 void WrittenCourse::exportCSV(std::string filename) {
@@ -87,16 +129,21 @@ void WrittenCourse::exportCSV(std::string filename) {
     });
 }
 
-float ProjectCourse::finalResult(Student* student) {
-    //std::cout << sum() << std::endl;
-    auto a = studentsMap.find(student);
-    std::tuple<float, float, float, float> b = a->second;
-    std::cout << sum(b) << std::endl;
-    return 0;
+void WrittenCourse::remove_from_student_map(Student *student) {
+    studentsMap.erase(student);
 }
 
-std::string ProjectCourse::grade(Student*) {
-    return std::string();
+float ProjectCourse::finalResult(Student* student) {
+    auto gradesTuple = findStudentInMap<std::tuple<float, float, float, float>>(student, studentsMap);
+    std::tuple<float, float, float, float> c = std::make_tuple(std::get<0>(gradesTuple), std::get<1>(gradesTuple), std::get<2>(gradesTuple), std::get<3>(gradesTuple));
+    return calculateProject(c);
+}
+
+std::string ProjectCourse::grade(Student* student) {
+    int res = finalResult(student);
+    char grade = gradeMap.find(res)->second;
+    std::string grade_str(1, grade);
+    return grade_str;
 }
 
 void ProjectCourse::exportCSV(std::string filename) {
@@ -114,18 +161,28 @@ void ProjectCourse::exportCSV(std::string filename) {
         float project3 = std::stof(tokens[5]);
         float project4 = std::stof(tokens[6]);
         f_studentsMap->insert(std::make_pair(line_student, std::make_tuple(project1, project2, project3, project4)));
-        //f_studentsMap[line_student] = std::make_tuple(project1, project2, project3, project4);
-        //f_studentsMap ->operator[](line_student) = std::make_tuple(project1, project2, project3, project4);
     });
 }
 
-float HybridCourse::finalResult(Student*) {
-    return 0;
+ProjectCourse::ProjectCourse(std::string name, std::string id, int credit) : Course(name, id, credit) {
+    precomputeGradeMap(gradeMap);
 }
 
-std::string HybridCourse::grade(Student*) {
+void ProjectCourse::remove_from_student_map(Student *student) {
+    studentsMap.erase(student);
+}
 
-    return std::string();
+float HybridCourse::finalResult(Student* student) {
+    auto gradesTuple = findStudentInMap<std::tuple<float, float, float, float>>(student, studentsMap);
+    std::tuple<float, float, float, float> b = std::make_tuple(std::get<0>(gradesTuple), std::get<1>(gradesTuple), std::get<2>(gradesTuple), std::get<3>(gradesTuple));
+    return calculateHybrid(b);
+}
+
+std::string HybridCourse::grade(Student* student) {
+    int res = finalResult(student);
+    char grade = gradeMap.find(res)->second;
+    std::string grade_str(1, grade);
+    return grade_str;
 }
 
 void HybridCourse::exportCSV(std::string filename) {
@@ -142,4 +199,12 @@ void HybridCourse::exportCSV(std::string filename) {
         float exam = std::stof(tokens[6]);
         f_studentsMap -> insert(std::make_pair(line_student, std::make_tuple(project1, project2, project3, exam)));
     });
+}
+
+HybridCourse::HybridCourse(std::string name, std::string id, int credit) : Course(name, id, credit) {
+    precomputeGradeMap(gradeMap);
+}
+
+void HybridCourse::remove_from_student_map(Student *student) {
+    studentsMap.erase(student);
 }

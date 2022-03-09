@@ -22,11 +22,14 @@ private:
 public:
     Student() = default;
     Student(std::string firstName, std::string lastName, int id);
-    ~Student() = default;
+    ~Student();
     std::string getName() const;
+    std::string getFirstName() const;
+    std::string getLastName() const;
     std::string getStudID() const;
     std::vector<Course*>  getCourses();
     void add_course(Course* course);
+    void remove_course(Course* course);
 };
 
 #endif //PASSAU_CPLUSPLUS_OOP_STUDENT_H

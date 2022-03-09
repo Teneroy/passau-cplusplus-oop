@@ -56,9 +56,23 @@ void readStudents(const std::string& filename)
         while (getline(s, field,',')) {
             tokens.push_back(field);
         }
-        //students.emplace_back(tokens[1], tokens[2], std::stoi(tokens[0]));
-        Course::add_student_to_student_list(new Student(tokens[1], tokens[2], std::stoi(tokens[0])));
+        std::string lastName = tokens[2];
+        lastName.erase(std::remove(lastName.begin(), lastName.end(), '\r'),
+                       lastName.end());
+        Course::add_student_to_student_list(new Student(tokens[1], lastName, std::stoi(tokens[0])));
         str_number++;
+    }
+}
+
+void writeCourseGrades(Course * course) {
+    std::ofstream filestream("/home/studone/PassauOOP/passau-cplusplus-oop/question2/csv/" + course -> getID() + "-grade.csv");
+    if(!filestream) {
+        throw std::ifstream::failure("Can't open a file!");
+    }
+    filestream << "First Name,Last Name,Matriculation,ID,Final Result,Grade\n";
+    for (const auto &student : course->getStudents()) {
+        filestream <<  student->getFirstName() + "," + student->getLastName() + "," + student->getStudID() + "," + course->getID() + "," +
+                std::to_string(course->finalResult(student)) + "," + course->grade(student) + "\n";
     }
 }
 
@@ -76,7 +90,7 @@ int main() {
     }
 
     for (const auto &item : courses) {
-        item->finalResult(Course::getAllStudents()[0]);
+        writeCourseGrades(item);
     }
 
     return 0;
