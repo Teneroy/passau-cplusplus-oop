@@ -4,9 +4,10 @@
 #include <iostream>
 #include<fstream>
 #include <sstream>
+#include <filesystem>
 
-void readCourses(const std::string& filename, std::vector<Course*>& courses)
-{
+
+void read(const std::string& filename, const std::function<void(std::vector<std::string>& tokens)>& func) {
     std::ifstream filestream(filename);
     if(!filestream) {
         throw std::ifstream::failure("Can't open a file!");
@@ -25,47 +26,13 @@ void readCourses(const std::string& filename, std::vector<Course*>& courses)
         while (getline(s, field,',')) {
             tokens.push_back(field);
         }
-        if(tokens[3] == "p") {
-            courses.push_back(new ProjectCourse(tokens[1], tokens[0], std::stoi(tokens[2])));
-        } else if(tokens[3] == "w") {
-            courses.push_back(new WrittenCourse(tokens[1], tokens[0], std::stoi(tokens[2])));
-        } else {
-            courses.push_back(new HybridCourse(tokens[1], tokens[0], std::stoi(tokens[2])));
-        }
-        str_number++;
-    }
-}
-
-void readStudents(const std::string& filename)
-{
-    std::ifstream filestream(filename);
-    if(!filestream) {
-        throw std::ifstream::failure("Can't open a file!");
-    }
-
-    std::string line;
-    int str_number = 0;
-    while(std::getline(filestream, line)) {
-        if (str_number == 0) {
-            str_number++;
-            continue;
-        }
-        std::istringstream s(line);
-        std::string field;
-        std::vector<std::string> tokens;
-        while (getline(s, field,',')) {
-            tokens.push_back(field);
-        }
-        std::string lastName = tokens[2];
-        lastName.erase(std::remove(lastName.begin(), lastName.end(), '\r'),
-                       lastName.end());
-        Course::add_student_to_student_list(new Student(tokens[1], lastName, std::stoi(tokens[0])));
+        func(tokens);
         str_number++;
     }
 }
 
 void writeCourseGrades(Course * course) {
-    std::ofstream filestream("/home/studone/PassauOOP/passau-cplusplus-oop/question2/csv/" + course -> getID() + "-grade.csv");
+    std::ofstream filestream(std::filesystem::current_path().string() + "/csv/" + course -> getID() + "-grade.csv");
     if(!filestream) {
         throw std::ifstream::failure("Can't open a file!");
     }
@@ -78,15 +45,25 @@ void writeCourseGrades(Course * course) {
 
 int main() {
     std::vector<Course*> courses;
-    readCourses("/home/studone/PassauOOP/passau-cplusplus-oop/question2/csv/courses.csv", courses);
-    for (const auto &item : courses) {
-        std::cout << item->getID() << std::endl;
-    }
+    read(std::filesystem::current_path().string() + "/csv/courses.csv", [&courses](std::vector<std::string>& tokens) {
+        if(tokens[3] == "p") {
+            courses.push_back(new ProjectCourse(tokens[1], tokens[0], std::stoi(tokens[2])));
+        } else if(tokens[3] == "w") {
+            courses.push_back(new WrittenCourse(tokens[1], tokens[0], std::stoi(tokens[2])));
+        } else {
+            courses.push_back(new HybridCourse(tokens[1], tokens[0], std::stoi(tokens[2])));
+        }
+    });
 
-    readStudents("/home/studone/PassauOOP/passau-cplusplus-oop/question2/csv/students.csv");
+    read(std::filesystem::current_path().string() + "/csv/students.csv", [](std::vector<std::string>& tokens) {
+        std::string lastName = tokens[2];
+        lastName.erase(std::remove(lastName.begin(), lastName.end(), '\r'),
+                       lastName.end());
+        Course::add_student_to_student_list(new Student(tokens[1], lastName, std::stoi(tokens[0])));
+    });
 
     for (const auto &item : courses) {
-        item->exportCSV("/home/studone/PassauOOP/passau-cplusplus-oop/question2/csv/" + item->getID() + "-scores.csv");
+        item->exportCSV(std::filesystem::current_path().string() + "/csv/" + item->getID() + "-scores.csv");
     }
 
     for (const auto &item : courses) {
